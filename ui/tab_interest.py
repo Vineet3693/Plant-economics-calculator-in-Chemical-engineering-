@@ -1,5 +1,6 @@
 # ui/tab_interest.py
-from calculations.interest import simple_interest, future_value, present_worth, annuity_present_worth, annuity_future_worth, cashflow_curve
+from ..calculations.interest import simple_interest, future_value, present_worth, annuity_present_worth, annuity_future_worth, cashflow_curve
+
 
 def render_interest_tab():
     st.header("📈 Interest and Time Value of Money")
