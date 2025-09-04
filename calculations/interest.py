@@ -1,33 +1,36 @@
-# calculations/interest.py
 
-def simple_interest(P, r, t):
-    """Calculate Simple Interest"""
-    return P * r * t
+"""
+Interest and Time Value of Money Calculations
+"""
+import numpy as np
+import pandas as pd
 
+def simple_interest(P, i, n):
+    """Calculate simple interest"""
+    return P * i * n
 
-def future_value(P, r, n):
-    """Calculate Future Value"""
-    return P * (1 + r) ** n
+def future_value(P, i, n):
+    """Calculate future value with compound interest"""
+    return P * (1 + i) ** n
 
+def present_worth(F, i, n):
+    """Calculate present worth"""
+    return F / (1 + i) ** n
 
-def present_worth(F, r, n):
-    """Calculate Present Worth"""
-    return F / ((1 + r) ** n)
+def annuity_present_worth(A, i, n):
+    """Calculate present worth of annuity"""
+    if i == 0:
+        return A * n
+    return A * ((1 + i) ** n - 1) / (i * (1 + i) ** n)
 
+def annuity_future_worth(A, i, n):
+    """Calculate future worth of annuity"""
+    if i == 0:
+        return A * n
+    return A * ((1 + i) ** n - 1) / i
 
-def annuity_present_worth(A, r, n):
-    """Calculate Present Worth of Annuity"""
-    return A * ((1 - (1 + r) ** -n) / r)
-
-
-def annuity_future_worth(A, r, n):
-    """Calculate Future Worth of Annuity"""
-    return A * (((1 + r) ** n - 1) / r)
-
-
-def cashflow_curve(P, r, n):
-    """Generate cashflow values for n years"""
-    values = []
-    for i in range(1, n + 1):
-        values.append(future_value(P, r, i))
-    return values
+def cashflow_curve(P, i, n):
+    """Generate cashflow data for plotting"""
+    years = list(range(n + 1))
+    values = [P * (1 + i) ** year for year in years]
+    return pd.DataFrame({'Year': years, 'Value': values})
