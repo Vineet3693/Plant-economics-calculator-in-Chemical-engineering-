@@ -1,34 +1,69 @@
 # ui/tab_interest.py
 import streamlit as st
-from calculations.interest import simple_interest, future_value, present_worth, annuity_present_worth, annuity_future_worth, cashflow_curve
-import plotly.express as px
-from utils.ai_helper import maybe_explain
+from calculations.interest import (
+    simple_interest,
+    future_value,
+    present_worth,
+    annuity_present_worth,
+    annuity_future_worth,
+    cashflow_curve,
+)
+
 
 def render_interest_tab():
-    st.header("Interest & Time Value of Money")
-    col = st.columns(4)
-    P = col[0].number_input("Principal (P)", value=100000.0, min_value=0.0, step=1000.0)
-    i_pct = col[1].number_input("Interest Rate i (%)", value=10.0, min_value=0.0, step=0.1)
-    n = int(col[2].number_input("Periods (n, years)", value=5, min_value=1, step=1))
-    A = col[3].number_input("Annuity (A)", value=0.0, min_value=0.0, step=100.0)
+    st.header("📈 Interest and Time Value of Money")
 
-    i = i_pct / 100.0
+    option = st.selectbox(
+        "Select Calculation",
+        [
+            "Simple Interest",
+            "Future Value",
+            "Present Worth",
+            "Annuity Present Worth",
+            "Annuity Future Worth",
+            "Cashflow Curve",
+        ],
+    )
 
-    st.subheader("Key Results")
-    c1, c2, c3, c4, c5 = st.columns(5)
-    c1.metric("Simple Interest", f"{simple_interest(P, i, n):,.2f}")
-    c2.metric("Future Value F", f"{future_value(P, i, n):,.2f}")
-    c3.metric("Present Worth of F", f"{present_worth(future_value(P, i, n), i, n):,.2f}")
-    c4.metric("PW of Annuity (A→P)", f"{annuity_present_worth(A, i, n):,.2f}")
-    c5.metric("FW of Annuity (A→F)", f"{annuity_future_worth(A, i, n):,.2f}")
+    if option == "Simple Interest":
+        P = st.number_input("Principal (P)", value=1000.0)
+        r = st.number_input("Rate of Interest (r)", value=0.05)
+        t = st.number_input("Time (t)", value=5.0)
+        if st.button("Calculate"):
+            st.success(f"Simple Interest = {simple_interest(P, r, t):.2f}")
 
-    years, values = cashflow_curve(P, i, n)
-    fig = px.line(x=years, y=values, labels={"x": "Year", "y": "Value"}, title="Growth of Principal Over Time")
-    st.plotly_chart(fig, use_container_width=True)
+    elif option == "Future Value":
+        P = st.number_input("Principal (P)", value=1000.0)
+        r = st.number_input("Rate (r)", value=0.05)
+        n = st.number_input("Years (n)", value=5)
+        if st.button("Calculate"):
+            st.success(f"Future Value = {future_value(P, r, n):.2f}")
 
-    maybe_explain("Interest & TVM", {
-        "P": P, "i": i, "n": n, "A": A
-    }, {
-        "Future Value": future_value(P, i, n),
-        "PW(Annuity)": annuity_present_worth(A, i, n)
-    })
+    elif option == "Present Worth":
+        F = st.number_input("Future Value (F)", value=2000.0)
+        r = st.number_input("Rate (r)", value=0.05)
+        n = st.number_input("Years (n)", value=5)
+        if st.button("Calculate"):
+            st.success(f"Present Worth = {present_worth(F, r, n):.2f}")
+
+    elif option == "Annuity Present Worth":
+        A = st.number_input("Annuity (A)", value=500.0)
+        r = st.number_input("Rate (r)", value=0.05)
+        n = st.number_input("Years (n)", value=5)
+        if st.button("Calculate"):
+            st.success(f"Annuity Present Worth = {annuity_present_worth(A, r, n):.2f}")
+
+    elif option == "Annuity Future Worth":
+        A = st.number_input("Annuity (A)", value=500.0)
+        r = st.number_input("Rate (r)", value=0.05)
+        n = st.number_input("Years (n)", value=5)
+        if st.button("Calculate"):
+            st.success(f"Annuity Future Worth = {annuity_future_worth(A, r, n):.2f}")
+
+    elif option == "Cashflow Curve":
+        P = st.number_input("Principal (P)", value=1000.0)
+        r = st.number_input("Rate (r)", value=0.05)
+        n = st.number_input("Years (n)", value=10)
+        if st.button("Generate"):
+            values = cashflow_curve(P, r, n)
+            st.line_chart(values)
