@@ -1,5 +1,9 @@
-# ui/tab_interest.py
-from ..calculations.interest import simple_interest, future_value, present_worth, annuity_present_worth, annuity_future_worth, cashflow_curve
+
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from calculations.interest import simple_interest, future_value, present_worth, annuity_present_worth, annuity_future_worth, cashflow_curve
 
 
 def render_interest_tab():
